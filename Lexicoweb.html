@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Analizador Léxico</title>
+  <style>
+   table {
+  border-collapse: collapse;
+  width: 60%;
+  margin-top: 15px;
+}
+th, td {
+  border: 1px solid #333;
+  padding: 8px;
+  text-align: center;
+}
+th {
+  background-color: #f2f2f2;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Analizador Léxico</h1>
+  <p>Escribe tu código aquí:</p>
+
+  <textarea id="input">unach = 1; tecnm = 2; upchiapas = 3;</textarea>
+  <br>
+  <button onclick="analizar()">Analizar</button>
+
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+  function Lex(input) {
+    const tokens = [];
+    let i = 0;
+
+    while (i < input.length) {
+      let char = input[i];
+
+      // Ignorar espacios
+      if (char === " ") {
+        i++;
+        continue;
+      }
+
+      // Letras (variables o identificadores)
+      if (/[a-zA-Z]/.test(char)) {
+        let lexema = "";
+
+        while (/[a-zA-Z]/.test(input[i])) {
+          lexema += input[i];
+          i++;
+        }
+
+        // Regla de variable
+        if (/^[a-z]$/.test(lexema)) {
+          tokens.push({ lexema, token: "variable" });
+        } else {
+          tokens.push({ lexema, token: "identificador" });
+        }
+        continue;
+      }
+
+      // Números
+      if (/\d/.test(char)) {
+        let lexema = "";
+
+        while (/\d/.test(input[i])) {
+          lexema += input[i];
+          i++;
+        }
+
+        tokens.push({ lexema, token: "numero" });
+        continue;
+      }
+
+      // Operadores y símbolos
+      switch (char) {
+        case "=":
+          tokens.push({ lexema: "=", token: "igual" });
+          break;
+        case "+":
+          tokens.push({ lexema: "+", token: "suma" });
+          break;
+        case "-":
+          tokens.push({ lexema: "-", token: "resta" });
+          break;
+        case "*":
+          tokens.push({ lexema: "*", token: "multiplicacion" });
+          break;
+        case "/":
+          tokens.push({ lexema: "/", token: "division" });
+          break;
+      }
+
+      i++;
+    }
+
+    return tokens;
+  }
+
+
+  function analizar() {
+    const texto = document.getElementById("input").value;
+    const resultado = document.getElementById("resultado");
+
+    const tokens = Lex(texto);
+
+    let salida = `
+      <h3>Resultado del Análisis Léxico</h3>
+      <table>
+        <tr>
+          <th>Lexema</th>
+          <th>Token</th>
+        </tr>
+    `;
+
+    for (let t of tokens) {
+      salida += `
+        <tr>
+          <td>${t.lexema}</td>
+          <td>${t.token}</td>
+        </tr>
+      `;
+    }
+
+    salida += "</table>";
+
+    resultado.innerHTML = salida;
+  }
+</script>
+
+</body>
+</html>
